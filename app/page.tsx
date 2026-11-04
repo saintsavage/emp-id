@@ -13,7 +13,7 @@ export default function Home() {
 
       <section className="hero">
         <div className="eyebrow"><span /> EMP EXCLUSIVE NETWORK</div>
-        <h1>ONE IDENTITY.<br /><em>EVERY APPLICATION.</em></h1>
+        <h1>WELCOME TO THE<br /><em>EMP EXCLUSIVE</em><br />ECO-SYSTEM,<br /><em>STEP INSIDE.</em></h1>
         <p className="intro">One secure identity for your place across the EMP ecosystem.</p>
       </section>
 
