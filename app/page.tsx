@@ -1,9 +1,38 @@
 "use client";
 
 import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 export default function Home() {
   const [mode, setMode] = useState<"create" | "login">("create");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setMessage("");
+    try {
+      const result = mode === "create"
+        ? await authClient.signUp.email({ name, email, password })
+        : await authClient.signIn.email({ email, password });
+      if (result.error) {
+        setMessage(result.error.message || "We couldn't complete that request. Check your details and try again.");
+      } else {
+        setMessage(mode === "create"
+          ? "Your EMP ID account has been created. Your secure account session is now active."
+          : "You're signed in to EMP ID.");
+      }
+    } catch {
+      setMessage("EMP ID is temporarily unavailable. Please try again shortly.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <main className="shell">
       <header className="topbar">
@@ -23,17 +52,16 @@ export default function Home() {
           <div className="shield">✦</div>
         </div>
         <div className="tabs">
-          <button className={mode === "create" ? "active" : ""} onClick={() => setMode("create")}>Create ID</button>
-          <button className={mode === "login" ? "active" : ""} onClick={() => setMode("login")}>Sign in</button>
+          <button type="button" className={mode === "create" ? "active" : ""} onClick={() => { setMode("create"); setMessage(""); }}>Create ID</button>
+          <button type="button" className={mode === "login" ? "active" : ""} onClick={() => { setMode("login"); setMessage(""); }}>Sign in</button>
         </div>
-        <form onSubmit={(e) => e.preventDefault()}>
-          {mode === "create" && <><label>FULL NAME<input placeholder="Enter your full name" autoComplete="name" /></label><div className="two-col"><label>DATE OF BIRTH<input type="date" /></label><label>COUNTRY<select defaultValue=""><option value="" disabled>Select country</option><option>Botswana</option><option>Zimbabwe</option><option>Other</option></select></label></div></>}
-          <label>EMAIL ADDRESS<input type="email" placeholder="you@example.com" autoComplete="email" /></label>
-          {mode === "create" && <label>CREATE PASSWORD<input type="password" placeholder="At least 12 characters" autoComplete="new-password" /></label>}
-          {mode === "login" && <label>PASSWORD<input type="password" placeholder="Enter your password" autoComplete="current-password" /></label>}
-          <button className="submit" type="submit">{mode === "create" ? "CONTINUE TO REGISTRATION" : "SIGN IN"} <span>↗</span></button>
+        <form onSubmit={submit}>
+          {mode === "create" && <label>FULL NAME<input value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your full name" autoComplete="name" required /></label>}
+          <label>EMAIL ADDRESS<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@example.com" autoComplete="email" required /></label>
+          <label>{mode === "create" ? "CREATE PASSWORD" : "PASSWORD"}<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder={mode === "create" ? "At least 12 characters" : "Enter your password"} autoComplete={mode === "create" ? "new-password" : "current-password"} minLength={mode === "create" ? 12 : 1} required /></label>
+          <button className="submit" type="submit" disabled={busy}>{busy ? "PLEASE WAIT..." : mode === "create" ? "CREATE EMP ID ACCOUNT" : "SIGN IN"} <span>↗</span></button>
         </form>
-        <div className="notice">Registration and identity verification will be enabled after security and privacy setup.</div>
+        {message && <div className="notice" role="status">{message}</div>}
         <div className="brand-foot"><span>EMP_EXCLUSIVE</span><b>SECURE IDENTITY · EST. 2026</b></div>
       </section>
       <footer>© 2026 EMP EXCLUSIVE <span>BLACK / RED / SILVER</span></footer>
