@@ -17,8 +17,6 @@ export default function Home() {
         <p className="intro">One secure identity for your place across the EMP ecosystem.</p>
       </section>
 
-      <div className="wildlife" aria-hidden="true"><span>🐘</span><span>🦒</span><span>🐆</span><span>🦜</span></div>
-
       <section className="auth-card">
         <div className="card-head">
           <div><div className="mini-label">YOUR DIGITAL IDENTITY</div><h2>{mode === "create" ? "Create your account" : "Welcome back"}</h2></div>
