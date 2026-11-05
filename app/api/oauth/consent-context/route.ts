@@ -29,8 +29,8 @@ export async function GET(request: Request) {
       headers: request.headers,
     });
     return NextResponse.json({
-      clientName: client.name || "An EMP project",
-      clientUri: client.uri || null,
+      clientName: (client as unknown as { client_name?: string; clientName?: string }).client_name || (client as unknown as { clientName?: string }).clientName || "An EMP project",
+      clientUri: (client as unknown as { uri?: string | null }).uri || null,
       scopes: (query.get("scope") || "").split(" ").filter(Boolean),
     });
   } catch {
