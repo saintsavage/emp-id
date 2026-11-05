@@ -18,3 +18,13 @@ footer{display:flex;justify-content:space-between;max-width:510px;margin:24px au
 .consent-actions{display:grid;grid-template-columns:.7fr 1.3fr;gap:10px;margin-top:22px}
 .submit.secondary{background:#171717;border:1px solid #414141;color:#ddd}
 @media(max-width:560px){.consent-actions{grid-template-columns:1fr}}
+
+.emp-number{display:block;margin-top:10px;color:#f2dfe0;font:700 11px 'DM Mono',monospace;letter-spacing:1px}
+.consent-card h2{font-size:26px;margin:12px 0}
+.scope-list{display:grid;gap:10px;margin:22px 0}
+.scope{display:flex;gap:10px;align-items:center;padding:12px;background:#090909;border:1px solid #292929;border-radius:7px;color:#c9c9c9;font-size:12px}
+.scope span{color:#d52b35;font-weight:800}
+.consent-note{color:#8f8f8f;font-size:11px;line-height:1.6}
+.consent-actions{display:grid;grid-template-columns:.7fr 1.3fr;gap:10px;margin-top:22px}
+.submit.secondary{background:#171717;border:1px solid #414141;color:#ddd}
+@media(max-width:560px){.consent-actions{grid-template-columns:1fr}}
