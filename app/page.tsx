@@ -6,25 +6,38 @@ import { authClient } from "@/lib/auth-client";
 export default function Home() {
   const [mode, setMode] = useState<"create" | "login">("create");
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [empId, setEmpId] = useState("");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
     setMessage("");
+    setEmpId("");
     try {
-      const result = mode === "create"
-        ? await authClient.signUp.email({ name, email, password })
-        : await authClient.signIn.email({ email, password });
-      if (result.error) {
-        setMessage(result.error.message || "We couldn't complete that request. Check your details and try again.");
+      if (mode === "create") {
+        const result = await authClient.signUp.email({ name, username, email, password });
+        if (result.error) {
+          setMessage(result.error.message || "We couldn't create your account. Check your details and try again.");
+        } else {
+          const createdEmpId = (result.data?.user as { empId?: string } | undefined)?.empId;
+          setEmpId(createdEmpId || "");
+          setMessage("Your EMP ID account has been created and your secure session is active.");
+        }
       } else {
-        setMessage(mode === "create"
-          ? "Your EMP ID account has been created. Your secure account session is now active."
-          : "You're signed in to EMP ID.");
+        const result = identifier.includes("@")
+          ? await authClient.signIn.email({ email: identifier.trim(), password })
+          : await authClient.signIn.username({ username: identifier.trim(), password });
+        if (result.error) {
+          setMessage(result.error.message || "We couldn't sign you in. Check your details and try again.");
+        } else {
+          setMessage("You're signed in to EMP ID.");
+        }
       }
     } catch {
       setMessage("EMP ID is temporarily unavailable. Please try again shortly.");
@@ -42,7 +55,7 @@ export default function Home() {
 
       <section className="hero">
         <div className="eyebrow"><span /> EMP EXCLUSIVE NETWORK</div>
-        <h1>WELCOME TO THE<br /><em>EMP EXCLUSIVE</em><br />ECO-SYSTEM,<br /><em>STEP INSIDE.</em></h1>
+        <h1>ONE IDENTITY.<br /><em>EVERY PROJECT.</em></h1>
         <p className="intro">One secure identity for your place across the EMP ecosystem.</p>
       </section>
 
@@ -52,16 +65,23 @@ export default function Home() {
           <div className="shield">✦</div>
         </div>
         <div className="tabs">
-          <button type="button" className={mode === "create" ? "active" : ""} onClick={() => { setMode("create"); setMessage(""); }}>Create ID</button>
-          <button type="button" className={mode === "login" ? "active" : ""} onClick={() => { setMode("login"); setMessage(""); }}>Sign in</button>
+          <button type="button" className={mode === "create" ? "active" : ""} onClick={() => { setMode("create"); setMessage(""); setEmpId(""); }}>Create ID</button>
+          <button type="button" className={mode === "login" ? "active" : ""} onClick={() => { setMode("login"); setMessage(""); setEmpId(""); }}>Sign in</button>
         </div>
         <form onSubmit={submit}>
-          {mode === "create" && <label>FULL NAME<input value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your full name" autoComplete="name" required /></label>}
-          <label>EMAIL ADDRESS<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@example.com" autoComplete="email" required /></label>
-          <label>{mode === "create" ? "CREATE PASSWORD" : "PASSWORD"}<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder={mode === "create" ? "At least 12 characters" : "Enter your password"} autoComplete={mode === "create" ? "new-password" : "current-password"} minLength={mode === "create" ? 12 : 1} required /></label>
+          {mode === "create" ? (
+            <>
+              <label>REAL NAME<input value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your full legal name" autoComplete="name" minLength={2} maxLength={100} required /></label>
+              <label>USERNAME<input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Choose a unique username" autoComplete="username" minLength={3} maxLength={24} pattern="[A-Za-z0-9._]{3,24}" required /></label>
+              <label>EMAIL ADDRESS<input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@example.com" autoComplete="email" required /></label>
+            </>
+          ) : (
+            <label>EMAIL OR USERNAME<input value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder="Enter your email or username" autoComplete="username" required /></label>
+          )}
+          <label>{mode === "create" ? "CREATE PASSWORD" : "PASSWORD"}<input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder={mode === "create" ? "At least 12 characters" : "Enter your password"} autoComplete={mode === "create" ? "new-password" : "current-password"} minLength={mode === "create" ? 12 : 1} maxLength={128} required /></label>
           <button className="submit" type="submit" disabled={busy}>{busy ? "PLEASE WAIT..." : mode === "create" ? "CREATE EMP ID ACCOUNT" : "SIGN IN"} <span>↗</span></button>
         </form>
-        {message && <div className="notice" role="status">{message}</div>}
+        {message && <div className="notice" role="status">{message}{empId && <strong className="emp-number">YOUR EMP ID · {empId}</strong>}</div>}
         <div className="brand-foot"><span>EMP_EXCLUSIVE</span><b>SECURE IDENTITY · EST. 2026</b></div>
       </section>
       <footer>© 2026 EMP EXCLUSIVE <span>BLACK / RED / SILVER</span></footer>
