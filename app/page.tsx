@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type PointerEvent } from "react";
 import { authClient } from "@/lib/auth-client";
 
 export default function Home() {
@@ -13,6 +13,17 @@ export default function Home() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [empId, setEmpId] = useState("");
+
+  function trackPanelPointer(event: PointerEvent<HTMLElement>) {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty("--pointer-x", `${event.clientX - bounds.left}px`);
+    event.currentTarget.style.setProperty("--pointer-y", `${event.clientY - bounds.top}px`);
+  }
+
+  function resetPanelPointer(event: PointerEvent<HTMLElement>) {
+    event.currentTarget.style.setProperty("--pointer-x", "50%");
+    event.currentTarget.style.setProperty("--pointer-y", "50%");
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -62,7 +73,9 @@ export default function Home() {
         <p className="intro">One secure identity. Your place across every corner of EMP.</p>
       </section>
 
-      <section className="auth-card">
+      <section className="auth-card" onPointerMove={trackPanelPointer} onPointerLeave={resetPanelPointer}>
+        <span className="cursor-aura" aria-hidden="true" />
+        <span className="cursor-edge" aria-hidden="true" />
         <div className="card-head">
           <div><div className="mini-label">YOUR DIGITAL IDENTITY</div><h2>{mode === "create" ? "Create your account" : "Welcome back"}</h2></div>
           <div className="shield">✦</div>
