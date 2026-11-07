@@ -49,14 +49,17 @@ export default function Home() {
   return (
     <main className="shell">
       <header className="topbar">
-        <a className="wordmark" href="/">EMP<span>ID</span></a>
+        <div className="brand-lockup">
+          <a className="wordmark" href="/">EMP<span>ID</span></a>
+          <p className="brand-motto">STEP INSIDE. YOU'RE PART OF SOMETHING BIGGER.</p>
+        </div>
         <div className="top-note"><i /> CENTRAL IDENTITY SYSTEM</div>
       </header>
 
       <section className="hero">
         <div className="eyebrow"><span /> EMP EXCLUSIVE NETWORK</div>
-        <h1>ONE IDENTITY.<br /><em>EVERY PROJECT.</em></h1>
-        <p className="intro">One secure identity for your place across the EMP ecosystem.</p>
+        <h1>WELCOME TO THE<br /><em>EMP ECOSYSTEM.</em></h1>
+        <p className="intro">One secure identity. Your place across every corner of EMP.</p>
       </section>
 
       <section className="auth-card">
