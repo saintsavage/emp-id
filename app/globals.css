@@ -66,3 +66,10 @@ footer{display:flex;justify-content:space-between;max-width:510px;margin:24px au
 footer{font-size:7px}
 .consent-actions{grid-template-columns:1fr}
 }
+
+.auth-card{--pointer-x:50%;--pointer-y:50%}
+.auth-card>.cursor-aura{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;background:radial-gradient(230px circle at var(--pointer-x) var(--pointer-y),rgba(200,41,53,.19),rgba(200,41,53,.07) 38%,transparent 72%);transition:opacity .22s ease}
+.auth-card>.cursor-edge{position:absolute;inset:0;z-index:2;padding:1px;border-radius:inherit;pointer-events:none;opacity:0;background:radial-gradient(145px circle at var(--pointer-x) var(--pointer-y),rgba(226,55,68,.85),rgba(200,41,53,.22) 42%,transparent 75%);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;transition:opacity .22s ease}
+.auth-card>*:not(.cursor-aura):not(.cursor-edge){position:relative;z-index:1}
+@media(hover:hover) and (pointer:fine){.auth-card:hover>.cursor-aura,.auth-card:hover>.cursor-edge{opacity:1}}
+@media(prefers-reduced-motion:reduce){.auth-card>.cursor-aura,.auth-card>.cursor-edge{transition:none}}
